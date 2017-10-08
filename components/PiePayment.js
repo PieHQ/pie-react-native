@@ -17,24 +17,23 @@ export default class PiePayment extends Component {
   }
 
   initPayment() {
-    let { publicKey = '', wallet = 'default', commission = 0, amount = 0 } = this.props
-    if(this.publicKey.length && amount) {
-      let = sentData
-      this.setState({ sentData, init: true })
-    }
+
   }
 
   render() {
-    let { children: Button, props } = this.props.children
+    let { publicKey = '', wallet = 'default', commission = 0, amount = 0 } = this.props
+    if(publicKey.length && amount) {
+      let = sentData = { publicKey, wallet, commission, amount }
+      this.setState({ sentData, init: true })
+    }
+
     return (
-      {this.state.init &&
-      <View
-        <PaymentDialogue sentData={this.state.sentData} />
-      </View>}
-      {!this.state.init &&
-      <Button
-        onPress={this.handleInitPayment}
-        {...props} />}
+      <View>
+        {this.state.init &&
+          <PaymentDialogue sentData={this.state.sentData} />}
+        {!this.state.init &&
+        this.props.children}
+      </View>
     )
   }
 }
