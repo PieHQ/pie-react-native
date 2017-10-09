@@ -1,16 +1,18 @@
 import React, { Component } from 'react'
-import * as api from '../../utils/api'
+import { View, Dimensions, StyleSheet, Text } from 'react-native'
+import { Grid, Row } from 'react-native-elements'
 
-import config from '../config'
+import * as api from '../utils/api'
+import config from '../config/config'
 
 import DialogueBody from './DialogueBody'
 
-if(process.env.WEBPACK) require('./payment.scss')
+const screen = Dimensions.get('window')
 
-class PaymentDialogue extends Component {
+export default class PaymentDialogue extends Component {
   constructor(props) {
     super(props)
-    this.handleClose = ::this.closeDialogue
+    this.handleClose = this.closeDialogue.bind(this)
     this.state = {
       isLoading: true,
       error: {},
@@ -22,23 +24,18 @@ class PaymentDialogue extends Component {
   }
 
   componentDidMount() {
-    let eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent', eventer = window[eventMethod],
-    messageEvent = 'attachEvent' === eventMethod ? 'onmessage' : 'message'
-    eventer(messageEvent, (e) => {
-      let sentData = e.data || e.message
-      sentData['currency'] = sentData.currency || 'NGN'
-      sentData['currencySign'] = sentData.currency === 'USD' ? '$' : '₦'
-      api.post('initPaymentDialogue', { apiKey: sentData.publicKey,  }).then(response => {
-        if(response && response.data && response.data.business) {
-          this.setState({ isLoading: false, sentData, dataFromPie: response.data, headerName: response.data.business.name })
-        }
-      })
-    })
+    // let sentData = {}
+    // sentData['currency'] = sentData.currency || 'NGN'
+    // sentData['currencySign'] = sentData.currency === 'USD' ? '$' : '₦'
+    // api.post('initPaymentDialogue', { apiKey: sentData.publicKey,  }).then(response => {
+    //   if(response && response.data && response.data.business) {
+    //     this.setState({ isLoading: false, sentData, dataFromPie: response.data, headerName: response.data.business.name })
+    //   }
+    // })
   }
 
   closeDialogue(e) {
-    window.parent.postMessage('closeIframe', '*')
-    e.preventDefault()
+
   }
 
   showLoading() {
@@ -49,42 +46,42 @@ class PaymentDialogue extends Component {
     this.setState({ isLoading: false })
   }
 
+  changeChannel(channel, tab) {
+    if(!this.state.unswitchable) this.setState({ currentChannel: channel, currentTab: tab })
+  }
+
   render() {
     return (
-      <div>
-        <div className="pieTestingEnv text-center clearfix">
-          {(this.state.dataFromPie.business && !this.state.dataFromPie.business.livemode) &&
-          <div className="pieTestingEnvTab">
-            <div className="pieTestingEnvText">TEST</div>
-          </div>}
-        </div>
-        <div className="container pos-vertical-center">
-          <div className="piePaymentContainer">
-            <div className="cancel" onClick={this.handleClose}>×</div>
-            {this.state.isLoading &&
-            <div className="pieLoading">
-              <div className="hive-spinner">
-                <div className="hive-dot1"></div>
-                <div className="hive-dot2"></div>
-              </div>
-            </div>}
-            <div className="piePaymentContainer-header">
-              <div className="row">
-                <div className="logo">
-                  <img src={this.state.headerLogo} />
-                </div>
-                <div className="title text-center">
-                  <h3 className="">{this.state.headerName}</h3>
-                  <p className="lead">{this.state.sentData.customer}</p>
-                </div>
-              </div>
-            </div>
-            <DialogueBody dataFromPie={this.state.dataFromPie} sentData={this.state.sentData} api={api} loading={{showLoading: () => this.showLoading(), hideLoading: () => this.hideLoading()}} />
-          </div>
-        </div>
-      </div>
+      <View style={{ flex: 1, flexDirection: 'column' }}>
+        <View style={{ height: screen.height * 0.2 * 0.8, backgroundColor: '#e8e9eb' }}>
+          <Text style={[{ lineHeight: screen.height * 0.2 * 0.8, textAlign: 'center', fontWeight: '100' }, styles.h, styles.h3]}>{this.state.headerName}</Text>
+        </View>
+        <DialogueBody sentData={{}} dataFromPie={{ business: { name: 'Test business' } }} />
+      </View>
     )
   }
 }
 
-export default Payment
+const styles = StyleSheet.create({
+  h: {
+    //fontFamily: 'Open Sans',
+    color: '#252525',
+    fontWeight: '300',
+    marginTop: 0,
+    marginBottom: 0,
+  },
+  h1: {
+    fontSize: 40,
+  },
+  h2: {
+    fontSize: 34
+  },
+  h3: {
+    fontSize: 28
+  },
+  h4: {
+    fontSize: 22
+  },
+})
+
+// export default PaymentDialogue

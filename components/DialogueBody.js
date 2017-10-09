@@ -1,30 +1,32 @@
 import React, { Component } from 'react'
+import { Text, View, StyleSheet, Dimensions, TouchableHighlight } from 'react-native'
 import formSerializer from 'form-serialize'
 
-import CardTab from './TabCard'
-import BankTab from './TabBank'
+import CardTab from './TabWallet'
+import BankTab from './TabWallet'
 import WalletTab from './TabWallet'
 
 import Verification from './PsVerification'
 import Final from './PsFinal'
 
+const screen = Dimensions.get('window')
 const ErrorOccurred = ({ errors }) => {
   const errorMessage = errors.message.split('|')
   return (
-  <div className="alert bg--error">
-    { errorMessage.length > 1 ? <h4 className="alert-heading text-center">{errorMessage[0].toUpperCase()}</h4> : '' }
-    <div className="alert__body text-center">
-      <span>{ errorMessage.length > 1 ? errorMessage[1] : errorMessage[0] }</span>
-    </div>
-  </div>
+  <View className="alert bg--error">
+    { errorMessage.length > 1 ? <Text h4 className="alert-heading text-center">{errorMessage[0].toUpperCase()}</Text> : '' }
+    <View className="alert__body text-center">
+      <Text>{ errorMessage.length > 1 ? errorMessage[1] : errorMessage[0] }</Text>
+    </View>
+  </View>
   )
 }
 
 class DialogueBody extends Component {
   constructor(props) {
     super(props)
-    this.handleSubmit = ::this.chargeCustomer
-    this.handleAuthentication = ::this.authenticateCustomer
+    this.handleSubmit = this.chargeCustomer.bind(this)
+    this.handleAuthentication = this.authenticateCustomer.bind(this)
     this.state = {
       currentChannel: 'card',
       currentTab: CardTab,
@@ -148,38 +150,52 @@ class DialogueBody extends Component {
     const { currentTab: CurrentTab } = this.state
     const { dataFromPie, sentData } = this.props
     const setToRender = Object.keys(dataFromPie).length !== 0 && dataFromPie.constructor === Object
-    console.log('transactionData', this.state.transactionData)
+    console.log('transactionData', setToRender)
     return (
-      <div className="hivePaymentContainer-body">
+      <View style={{ height: screen.height * 0.8 * 0.8,  backgroundColor: '#fff' }}>
         {setToRender &&
-        <div>
-          <div className="tabs-container" data-content-align="left">
-            <ul className="tabs">
-              <li className={this.getClassName('card')} onClick={(e) => this.changeChannel('card', CardTab)}>
-                <div className="tab__title">
-                  <span className="h5">Debit Card</span>
-                </div>
-              </li>
-              <li className={this.getClassName('bank')} onClick={(e) => this.changeChannel('account', BankTab)}>
-                <div className="tab__title">
-                  <span className="h5">Bank Account</span>
-                </div>
-              </li>
-              <li className={this.getClassName('wallet')}>
-                <div className="tab__title" onClick={(e) => this.changeChannel('wallet', WalletTab)}>
-                  <span className="h5">Wallet</span>
-                </div>
-              </li>
-            </ul>
-          </div>
-          {Object.keys(this.state.errors).length !== 0 && <ErrorOccurred errors={this.state.errors} />}
-          {(Object.keys(this.state.errors).length === 0 && this.state.paymentStep === 1) && <CurrentTab sentData={sentData} onSubmit={this.handleSubmit} dataFromPie={dataFromPie} api={this.props.api} loading={this.props.loading} />}
-          {(Object.keys(this.state.errors).length === 0 && this.state.paymentStep === 2) && <Verification sentData={sentData} transactionData={this.state.transactionData} onSubmit={this.handleAuthentication} />}
-          {(Object.keys(this.state.errors).length === 0 && this.state.paymentStep === 3) && <Final timeToClose={this.state.timeToClose} />}
-        </div>}
-      </div>
+          <View style={{ flex: 1, flexDirection: 'column' }}>
+            <View style={{ height: screen.height * 0.8 * 0.8 * 0.1, flex: 1, flexDirection: 'row' }}>
+              <View style={[styles.tab]}>
+                <TouchableHighlight onPress={() => this.changeChannel() }>
+                  <Text style={[styles.tabText]}>Card</Text>
+                </TouchableHighlight>
+              </View>
+              <View style={[styles.tab]}>
+                <TouchableHighlight onPress={() => this.changeChannel() }>
+                  <Text style={[styles.tabText]}>Bank Account</Text>
+                </TouchableHighlight>
+              </View>
+              <View style={[styles.tab]}>
+                <TouchableHighlight onPress={() => this.changeChannel() }>
+                  <Text style={[styles.tabText]}>Wallet</Text>
+                </TouchableHighlight>
+              </View>
+            </View>
+            <View style={{ height: screen.height * 0.8 * 0.8 * 0.9 }}>
+            {Object.keys(this.state.errors).length !== 0 && <ErrorOccurred errors={this.state.errors} />}
+            {(Object.keys(this.state.errors).length === 0 && this.state.paymentStep === 1) && <CurrentTab sentData={sentData} onSubmit={this.handleSubmit} dataFromPie={dataFromPie} api={this.props.api} loading={this.props.loading} />}
+            {(Object.keys(this.state.errors).length === 0 && this.state.paymentStep === 2) && <Verification sentData={sentData} transactionData={this.state.transactionData} onSubmit={this.handleAuthentication} />}
+            {(Object.keys(this.state.errors).length === 0 && this.state.paymentStep === 3) && <Final timeToClose={this.state.timeToClose} />}
+          </View>
+        </View>}
+      </View>
     )
   }
 }
+
+
+const styles = StyleSheet.create({
+  tab: {
+    width: screen.width * 0.33333333,
+    borderColor: '#ececec',
+    borderWidth: 1,
+  },
+  tabText: {
+    textAlign: 'center',
+    lineHeight: screen.height * 0.8 * 0.8 * 0.1,
+    textAlignVertical: 'center'
+  }
+})
 
 export default DialogueBody
