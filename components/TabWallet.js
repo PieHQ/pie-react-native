@@ -28,7 +28,8 @@ export default class Wallet extends Component {
             keyboardType="phone-pad"
             maxLength={11}
             autoCapitalize="none"
-            onChange={(phone) => this.setState({phone})} />
+            value={this.state.phone}
+            onChangeText={ phone => this.setState({phone})} />
         </View>
         <View>
           <Button
@@ -46,6 +47,7 @@ export default class Wallet extends Component {
 const styles = StyleSheet.create({
   input: {
     margin: 15,
+    marginBottom: 0,
     height: 40,
     borderColor: Colors.accent,
     borderWidth: 1,
