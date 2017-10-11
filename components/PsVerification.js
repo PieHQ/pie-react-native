@@ -1,23 +1,44 @@
-import React from 'react'
+import React, { Component } from 'react'
+import { View, Text } from 'react-native'
+import { Button } from 'react-native-elements'
 
-export default ({ onSubmit, sentData, transactionData }) => (
-  <div className="row">
-    <div className="col-xs-12">
-      <form onSubmit={onSubmit}>
-        <input type="hidden" name="transactionId" value={transactionData.id} required="required" />
-        <input type="hidden" name="publicKey" value={sentData.publicKey} required="required" />
-        <div className="col-xs-12">
-          <p className="lead text-center">Please enter the OTP sent to you</p>
-        </div>
-        <div className="col-xs-12">
-          <input placeholder="OTP" className="text-center" type="text" name="authValue" autoComplete="off" />
-        </div>
-        <div className="col-xs-12">
-          <button
-            type="submit"
-            className="btn btn--primary type--uppercase">Confirm payment of {sentData.currencySign}{sentData.amount}</button>
-        </div>
-      </form>
-    </div>
-  </div>
-)
+import CommonStyles from '../assets/styles/common'
+
+export default class PsVerification extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      authValue: ''
+    }
+  }
+
+  render() {
+    let { onSubmit, sentData, transactionData } = this.props
+    return (
+      <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}>
+        <View>
+          <Text style={[CommonStyles.text]}>Please enter the OTP sent to you</Text>
+          <TextInput
+            style={[styles.input, styles.marginRight, styles.marginLeft]}
+            value={this.state.CCname}
+            underlineColorAndroid="transparent"
+            placeholder="OTP"
+            placeholderTextColor="#666666"
+            selectionColor="#666666"
+            keyboardType="phone-pad"
+            maxLength={6}
+            onChangeText={(authValue) => this.setState({authValue})} />
+        </View>
+        <View>
+          <Button
+            borderRadius={6}
+            color={Colors.white}
+            buttonStyle={{ backgroundColor: Colors.primaryColor, marginTop: 15 }}
+            onPress={() => onSubmit(this.state)}
+            title={`Confirm payment of ${sentData.currencySign}${sentData.amount}`} />
+        </View>
+      </View>
+    )
+  }
+}

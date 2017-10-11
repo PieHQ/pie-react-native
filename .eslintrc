@@ -1,0 +1,19 @@
+{
+  "plugins": [
+    "react",
+    "react-native"
+  ],
+  "extends": ["plugin:react-native/all"],
+  "parserOptions": {
+      "ecmaVersion": 7,
+      "sourceType": "module",
+      "ecmaFeatures": {
+          "jsx": true
+      }
+  },
+  "rules": {
+    "react-native/no-unused-styles": 2,
+    "react-native/split-platform-components": 2,
+    "react-native/no-color-literals": 2
+  }
+}

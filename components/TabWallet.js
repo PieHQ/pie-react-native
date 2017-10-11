@@ -1,9 +1,22 @@
 import React, { Component } from 'react'
-import { Text, View, TextInput, StyleSheet, Dimensions, KeyboardAvoidingView } from 'react-native'
+import { Text, View, StyleSheet, Dimensions, TextInput } from 'react-native'
+import {
+  ActionsContainer,
+  Button,
+  FieldsContainer,
+  Fieldset,
+  Form,
+  FormGroup,
+  Input,
+  Label,
+  Switch
+} from 'react-native-clean-form'
 
-const screen = Dimensions.get('window')
+import Colors from '../assets/literals/colors'
 
-export default class Card extends Component {
+const Screen = Dimensions.get('window')
+
+export default class Wallet extends Component {
   constructor(props) {
     super(props)
     this.handleWalletEnquiry = this.walletEnquiry.bind(this)
@@ -34,21 +47,29 @@ export default class Card extends Component {
   render() {
     const { sentData, onSubmit } = this.props
     return(
-      <KeyboardAvoidingView behavior='padding'>
-        <View style={[styles.tabContent, { flex: 1, alignItems: 'center', justifyContent: 'center' }]}>
-          <Text>Wallet Tab</Text>
-          <TextInput
-            style={{ height: 40, width: (screen), borderColor: '#ececec', borderWidth: 1 }}
-            placeholder="Phone Number"
-            onChangeText={(text) => this.setState({ text })} />
-        </View>
-      </KeyboardAvoidingView>
+      <View>
+        <TextInput
+          style={[styles.input]}
+          underlineColorAndroid="transparent"
+          placeholder="Phone Number"
+          placeholderTextColor="#666666"
+          selectionColor="#666666"
+          keyboardType="phone-pad"
+          maxLength={11}
+          autoCapitalize="none" />
+      </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  tabContent: {
-    padding: 12,
+  input: {
+    margin: 15,
+    height: 50,
+    borderColor: Colors.accent,
+    borderWidth: 1,
+    backgroundColor: Colors.inputBackground,
+    borderRadius: 6,
+    padding: 6.5
   }
 })

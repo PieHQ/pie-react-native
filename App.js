@@ -1,10 +1,14 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, View, Button, Dimensions, ScrollView } from 'react-native'
 import Modal from 'react-native-modalbox'
+import { Font } from 'expo'
+import KeyboardSpacer from 'react-native-keyboard-spacer'
 
 import PiePayment, { PaymentDialogue } from './components/PiePayment'
 
-const screen = Dimensions.get('window')
+import Colors from './assets/literals/colors'
+
+const Screen = Dimensions.get('window')
 
 export default class App extends Component {
 
@@ -16,6 +20,22 @@ export default class App extends Component {
       swipeToClose: true,
       sliderValue: 0.3
     }
+  }
+  
+  componentDidMount() {
+    Font.loadAsync({
+      'OpenSans-Bold': require('./assets/fonts/OpenSans-Bold.ttf'),
+      'OpenSans-BoldItalic': require('./assets/fonts/OpenSans-BoldItalic.ttf'),
+      'OpenSans-CondBold': require('./assets/fonts/OpenSans-CondBold.ttf'),
+      'OpenSans-CondLight': require('./assets/fonts/OpenSans-CondLight.ttf'),
+      'OpenSans-Extrabold': require('./assets/fonts/OpenSans-ExtraBold.ttf'),
+      'OpenSans-ExtraboldItalic': require('./assets/fonts/OpenSans-ExtraBoldItalic.ttf'),
+      'OpenSans-Light': require('./assets/fonts/OpenSans-Light.ttf'),
+      'OpenSans-LightItalic': require('./assets/fonts/OpenSans-LightItalic.ttf'),
+      'OpenSans-Regular': require('./assets/fonts/OpenSans-Regular.ttf'),
+      'OpenSans-Semibold': require('./assets/fonts/OpenSans-Semibold.ttf'),
+      'OpenSans-SemiboldItalic': require('./assets/fonts/OpenSans-SemiboldItalic.ttf'),
+    })
   }
 
   onClose() {
@@ -40,6 +60,11 @@ export default class App extends Component {
     return list;
   }
 
+  closeDialogue(data) {
+    this.setState({isOpen: false})
+    console.log(data)
+  }
+
   render() {
     const BContent = (
       <Button
@@ -57,7 +82,7 @@ export default class App extends Component {
           amount={5000}>
           <Text
             onPress={() => this.setState({isOpen: true})} style={styles.btn}
-            textStyle={{textAlign: 'center'}}>Pay</Text>
+            textStyle={{ textAlign: 'center' }}>Pay</Text>
         </PiePayment>
 
         <Modal
@@ -67,10 +92,17 @@ export default class App extends Component {
           swipeArea={20}
           backdropContent={BContent}
           onClosed={() => this.setState({isOpen: false})}>
-          <ScrollView>
-            <View style={{ width: screen.width }}>
-              <PaymentDialogue />
+          <ScrollView scrollEnabled={false}>
+            <View style={{ width: Screen.width }}>
+              <PaymentDialogue
+                publicKey="pk_WG3VlzyJ2NhcFbIr"
+                wallet="default"
+                commission={10}
+                amount={5000}
+                email="kb.james@logicaladdress.com"
+                actions={{ closeDialogue: (data) => this.closeDialogue(data) }} />
             </View>
+            <KeyboardSpacer/>
           </ScrollView>
         </Modal>
       </View>
@@ -81,14 +113,9 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-
-  wrapper: {
-    paddingTop: 50,
-    flex: 1
   },
 
   modal: {
@@ -96,19 +123,14 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
 
-  modal2: {
-    height: 230,
-    backgroundColor: "#3B5998"
-  },
-
   modal4: {
-    height: screen.height*0.8
+    height: Screen.height*0.8
   },
 
   btn: {
     margin: 10,
-    backgroundColor: "#3B5998",
-    color: "white",
+    backgroundColor: Colors.PrimaryColor,
+    color: Colors.white,
     padding: 10
   },
 
@@ -118,6 +140,6 @@ const styles = StyleSheet.create({
     right: 0,
     width: 50,
     height: 50,
-    backgroundColor: "transparent"
-},
+    backgroundColor: Colors.transparent
+  },
 });

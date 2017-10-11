@@ -1,13 +1,17 @@
 import React, { Component } from 'react'
-import { View, Dimensions, StyleSheet, Text } from 'react-native'
+import { View, Dimensions, StyleSheet, Text, Image, ActivityIndicator } from 'react-native'
 import { Grid, Row } from 'react-native-elements'
+import Spinner from 'react-native-loading-spinner-overlay'
 
 import * as api from '../utils/api'
 import config from '../config/config'
 
 import DialogueBody from './DialogueBody'
+import CommonStyles from '../assets/styles/common'
+import TabStyles from '../assets/styles/tab'
+import Colors from '../assets/literals/colors'
 
-const screen = Dimensions.get('window')
+const Screen = Dimensions.get('window')
 
 export default class PaymentDialogue extends Component {
   constructor(props) {
@@ -19,69 +23,64 @@ export default class PaymentDialogue extends Component {
       sentData: {},
       dataFromPie: {},
       headerName: config.appName,
-      headerLogo: '/assets/images/logo.png'
     }
   }
 
   componentDidMount() {
-    // let sentData = {}
-    // sentData['currency'] = sentData.currency || 'NGN'
-    // sentData['currencySign'] = sentData.currency === 'USD' ? '$' : '₦'
-    // api.post('initPaymentDialogue', { apiKey: sentData.publicKey,  }).then(response => {
-    //   if(response && response.data && response.data.business) {
-    //     this.setState({ isLoading: false, sentData, dataFromPie: response.data, headerName: response.data.business.name })
-    //   }
-    // })
+    let { publicKey, amount, commission = 0, wallet = 'default', email, currency = 'NGN' } = this.props
+    let sentData = { publicKey, amount, commission, wallet, email, currency }
+    sentData['currencySign'] = sentData.currency === 'USD' ? '$' : '₦'
+    api.post('initPaymentDialogue', { apiKey: sentData.publicKey }).then(response => {
+      console.log(response)
+      if(response && response.business) {
+        this.setState({ isLoading: false, sentData, dataFromPie: response, headerName: response.business.name })
+      }
+    }).catch(e => {
+      console.error(e)
+    })
   }
 
   closeDialogue(e) {
-
+    this.props.actions.closeDialogue()
   }
 
-  showLoading() {
+  _showLoading() {
     this.setState({ isLoading: true })
   }
 
-  hideLoading() {
+  _hideLoading() {
     this.setState({ isLoading: false })
-  }
-
-  changeChannel(channel, tab) {
-    if(!this.state.unswitchable) this.setState({ currentChannel: channel, currentTab: tab })
   }
 
   render() {
     return (
-      <View style={{ flex: 1, flexDirection: 'column' }}>
-        <View style={{ height: screen.height * 0.2 * 0.8, backgroundColor: '#e8e9eb' }}>
-          <Text style={[{ lineHeight: screen.height * 0.2 * 0.8, textAlign: 'center', fontWeight: '100' }, styles.h, styles.h3]}>{this.state.headerName}</Text>
+      <View>
+        <Spinner
+          visible={this.state.isLoading}
+          color={Colors.PrimaryColor} />
+        <View style={{ flex: 1, flexDirection: 'column' }}>
+          <View style={[TabStyles.dialogueHeader]} removeClippedSubviews={false}>
+            <View style={[TabStyles.dialogueHeaderImageContainer]}>
+              <Image source={require('../assets/images/logo.png')} style={[TabStyles.dialogueHeaderImage]} />
+            </View>
+            <View style={[TabStyles.dialogueHeaderTextContainer]}>
+              <Text style={[TabStyles.dialogueHeaderText, CommonStyles.text, CommonStyles.h3]}>{this.state.headerName}</Text>
+            </View>
+          </View>
+          <DialogueBody
+            api={api}
+            sentData={this.state.sentData}
+            dataFromPie={this.state.dataFromPie}
+            loading={{showLoading: () => this._showLoading(), hideLoading: () => this._hideLoading()}}
+            actions={{ closeDialogue: (data) => this.props.actions.closeDialogue(data) }} />
         </View>
-        <DialogueBody sentData={{}} dataFromPie={{ business: { name: 'Test business' } }} />
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  h: {
-    //fontFamily: 'Open Sans',
-    color: '#252525',
-    fontWeight: '300',
-    marginTop: 0,
-    marginBottom: 0,
-  },
-  h1: {
-    fontSize: 40,
-  },
-  h2: {
-    fontSize: 34
-  },
-  h3: {
-    fontSize: 28
-  },
-  h4: {
-    fontSize: 22
-  },
+  
 })
 
 // export default PaymentDialogue

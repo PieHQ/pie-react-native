@@ -11,16 +11,13 @@ export const get = (url, params = {}) => {
 }
 
 export const post = (url, params = {}) => {
-  return new Promise((resolve, reject) => {
-    fetch(`${baseUrl}${url}`, {
+  return fetch(`${baseUrl}${url}`, {
+      method: 'post',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(params)
     })
-    .then(response => response.json())
-    .then(responseJson => { return responseJson })
-    .catch(error => { console.error(error) })
-  })
+    .then(response => { return response.json()})
 }
