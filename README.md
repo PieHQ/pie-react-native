@@ -34,6 +34,7 @@ PiePayment component requires the following props.
 | inclusive    | `bool`      |    `true` | `true` means you will incur transaction charges and vice versa |
 
 On successful charge, PiePayment will call your `callback` with object with the following properties
+
 | Property      | Type           | Description  |
 |---------------|----------------|--------------|
 | trxref    | `string`      | The transaction reference with the prefix `chg_`. You can use this string to verify a transaction on your server |
