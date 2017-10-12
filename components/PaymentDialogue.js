@@ -16,7 +16,6 @@ const Screen = Dimensions.get('window')
 export default class PaymentDialogue extends Component {
   constructor(props) {
     super(props)
-    this.handleClose = this.closeDialogue.bind(this)
     this.state = {
       isLoading: true,
       error: {},
@@ -27,8 +26,9 @@ export default class PaymentDialogue extends Component {
   }
 
   componentDidMount() {
-    let { publicKey, amount, commission = 0, wallet = 'default', email, currency = 'NGN' } = this.props
-    let sentData = { publicKey, amount, commission, wallet, email, currency }
+    let { publicKey, amount, commission = 0, wallet = 'default', customer, currency = 'NGN' } = this.props
+    let sentData = { publicKey, amount, commission, wallet, email: customer, currency }
+    console.log(sentData)
     sentData['currencySign'] = sentData.currency === 'USD' ? '$' : '₦'
     api.post('initPaymentDialogue', { apiKey: sentData.publicKey }).then(response => {
       console.log(response)
@@ -39,11 +39,7 @@ export default class PaymentDialogue extends Component {
       console.error(e)
     })
   }
-
-  closeDialogue(e) {
-    this.props.actions.closeDialogue()
-  }
-
+  
   _showLoading() {
     this.setState({ isLoading: true })
   }
@@ -64,14 +60,21 @@ export default class PaymentDialogue extends Component {
               <Image source={require('../assets/images/logo.png')} style={[TabStyles.dialogueHeaderImage]} />
             </View>
             <View style={[TabStyles.dialogueHeaderTextContainer]}>
-              <Text style={[TabStyles.dialogueHeaderText, CommonStyles.text, CommonStyles.h3]}>{this.state.headerName}</Text>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={[TabStyles.dialogueHeaderText, CommonStyles.text, CommonStyles.h3]}>{this.state.headerName}</Text>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={[TabStyles.dialogueHeaderText, CommonStyles.text]}>{this.state.sentData.email || ''}</Text>
             </View>
           </View>
           <DialogueBody
             api={api}
             sentData={this.state.sentData}
             dataFromPie={this.state.dataFromPie}
-            loading={{showLoading: () => this._showLoading(), hideLoading: () => this._hideLoading()}}
+            loading={{ showLoading: () => this._showLoading(), hideLoading: () => this._hideLoading() }}
             actions={{ closeDialogue: (data) => this.props.actions.closeDialogue(data) }} />
         </View>
       </View>

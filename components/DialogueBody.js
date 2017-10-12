@@ -38,7 +38,7 @@ class DialogueBody extends Component {
       paymentStep: 1,
       errors: {},
       transactionData: {},
-      timeToClose: 5
+      timeToClose: 3
     }
   }
 
@@ -135,13 +135,12 @@ class DialogueBody extends Component {
             let timeToClose = this.state.timeToClose
             if(timeToClose < 1) {
               actions.closeDialogue({
-                transaction_reference: response.transaction.id,
+                trxref: response.transaction.id,
                 raw: response,
               })
             } else {
               timeToClose -= 1
               context.setState({ timeToClose: timeToClose })
-              console.log(context.state.timeToClose)
             }
           }, 1000)
           this.setState({ paymentStep: 3 })
@@ -193,7 +192,6 @@ class DialogueBody extends Component {
 const styles = StyleSheet.create({
   tabRow: { height: screen.height * 0.8 * 0.8 * 0.1, flex: 1, flexDirection: 'row' },
   tab: {
-    width: screen.width * 0.333333333333333333333333,
     borderColor: Colors.accent,
     borderWidth: 1,
     flex: 1,

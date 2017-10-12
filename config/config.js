@@ -1,5 +1,5 @@
 const base = {
-  appName: 'pie.ng',
+  appName: 'PIE.NG',
   apiUrl: 'https://hive-katorbryan.c9users.io',
 }
 
