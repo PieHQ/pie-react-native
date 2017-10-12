@@ -20,7 +20,8 @@
 [![pie-react-native](https://nodei.co/npm/pie-react-native.png)](https://npmjs.org/package/pie-react-native)
 
 ## Usage
-PiePayment component requires the following props
+PiePayment component requires the following props.
+
 | Property      | Type           |   Default  | Description  |
 |---------------|----------------|------------|--------------|
 | pubKey    | `string`      |    `none` | Your business public key |
